@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "944214901903",
-    "project_id": "mychatapptutorial-754ba",
-    "storage_bucket": "mychatapptutorial-754ba.appspot.com"
+    "project_number": "22489994865",
+    "project_id": "chatapp-4d12d",
+    "storage_bucket": "chatapp-4d12d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:944214901903:android:d1316af7e9de06e2891cfa",
+        "mobilesdk_app_id": "1:22489994865:android:d8620aee5eeddf981b6dd0",
         "android_client_info": {
           "package_name": "com.example.mychatapptutorial"
         }
       },
       "oauth_client": [
         {
-          "client_id": "944214901903-vvuuqoj6gl7d1m55ijna0khao074v2e6.apps.googleusercontent.com",
+          "client_id": "22489994865-7ud4ldfposvc7s50e6fngacngpljr2cj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.mychatapptutorial",
-            "certificate_hash": "150941ba8656894c715789791f187679ab1d0171"
+            "certificate_hash": "d73b750ec58957e1069ea28bb6e8b5b42708bbcf"
           }
         },
         {
-          "client_id": "944214901903-1pg1avsiht7dr9rnkl41om485i8qsgvh.apps.googleusercontent.com",
+          "client_id": "22489994865-lbclnb17d5k4jg45ug5pp1rbrdh0bggl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBnmRtf1GhHDseyn1rFbeF28bB-F83-T-U"
+          "current_key": "AIzaSyDBFPos4QLGzUlZNJJGdLXygP8dej472qk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "944214901903-1pg1avsiht7dr9rnkl41om485i8qsgvh.apps.googleusercontent.com",
+              "client_id": "22489994865-lbclnb17d5k4jg45ug5pp1rbrdh0bggl.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

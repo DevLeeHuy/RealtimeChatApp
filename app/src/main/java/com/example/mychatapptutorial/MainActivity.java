@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                 //how to automatically fetch code here
+                Intent intent=new Intent(MainActivity.this,chatActivity.class);
+                startActivity(intent);
             }
 
             @Override

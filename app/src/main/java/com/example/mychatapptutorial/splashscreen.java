@@ -23,7 +23,7 @@ public class splashscreen extends AppCompatActivity {
             @Override
             public void run() {
 
-                Intent intent=new Intent(splashscreen.this,MainActivity.class);
+                Intent intent=new Intent(splashscreen.this,chatActivity.class);
                 startActivity(intent);
                 finish();
 
