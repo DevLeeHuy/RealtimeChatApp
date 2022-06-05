@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "522917967523",
+    "project_id": "zaloclone-183e6",
+    "storage_bucket": "zaloclone-183e6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522917967523:android:3108e1bb29af2df047b116",
+        "android_client_info": {
+          "package_name": "hcmute.spkt.truongminhhoang.zaloclone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "522917967523-oaqukivgbumq34jjv89jslp34t59smfs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hcmute.spkt.truongminhhoang.zaloclone",
+            "certificate_hash": "db10a7dc06eb1d946381bd83970442c0687fa0b4"
+          }
+        },
+        {
+          "client_id": "522917967523-mfjrqsjae2vlfh2npkt8d4dj2sp4st9a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9BCwJR9GbCqk6Z8qllJZx1ARQukbVGFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "522917967523-mfjrqsjae2vlfh2npkt8d4dj2sp4st9a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
