@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Log.e("clg", "onCreate: " );
         init();
         getUserSession();
         listener();
@@ -66,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     private void getUserSession() {
-        logInViewModel = new LogInViewModel();
         logInViewModel.getFirebaseUserLogInStatus();
 //        logInViewModel.firebaseUserLoginStatus.observe(this, firebaseUser -> {
 //            currentUser = firebaseUser;

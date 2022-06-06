@@ -17,8 +17,7 @@ public class LogInViewModel extends ViewModel {
     public LiveData<Task> successPasswordReset;
     public LiveData<Boolean> successUpdateToken;
 
-
-    public void LogInViewModel() {
+    public LogInViewModel() {
         loginInstance = new FirebaseLoginInstance();
     }
 
@@ -27,6 +26,7 @@ public class LogInViewModel extends ViewModel {
     }
 
     public void getFirebaseUserLogInStatus() {
+//        loginInstance= new FirebaseLoginInstance();
         firebaseUserLoginStatus = loginInstance.getFirebaseUserLoginStatus();
     }
 

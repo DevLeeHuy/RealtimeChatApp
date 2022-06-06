@@ -23,12 +23,12 @@ public class FirebaseLoginInstance {
 
     public MutableLiveData<FirebaseUser> getFirebaseUserLoginStatus() {
 
-//        final MutableLiveData<FirebaseUser> firebaseUserLoginStatus = new MutableLiveData<>();
-        Log.e("clg", "getFirebaseUserLoginStatus");
+        final MutableLiveData<FirebaseUser> firebaseUserLoginStatus = new MutableLiveData<>();
 
-//        firebaseUserLoginStatus.setValue(firebaseUser);
-//        Log.e("TAG2", firebaseUserLoginStatus.toString());
-        return null;
+        firebaseUserLoginStatus.setValue(firebaseUser);
+        Log.e("TAG", "authStatus "+firebaseUserLoginStatus.getValue());
+
+        return firebaseUserLoginStatus;
 
     }
 
