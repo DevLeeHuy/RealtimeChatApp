@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/background"
     tools:context=".view.ui.LoginActivity">
 
     <FrameLayout
@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:indeterminateTint="#fff"
+            android:indeterminateTint="@color/colorAccent"
             android:elevation="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,14 +49,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.airbnb.lottie.LottieAnimationView
+                <!--                <com.airbnb.lottie.LottieAnimationView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="240dp"-->
+<!--                    android:layout_marginTop="0dp"-->
+<!--                    android:layout_marginEnd="50dp"-->
+<!--                    app:lottie_autoPlay="true"-->
+<!--                    app:lottie_loop="true"-->
+<!--                    app:lottie_rawRes="@raw/login_back_ground" />-->
+
+                <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="240dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginEnd="50dp"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/login_back_ground" />
+                    android:src="@drawable/zalo_banner" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -68,7 +75,7 @@
                     android:paddingStart="4dp"
                     android:paddingEnd="1dp"
                     android:text="@string/hi_there"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorAccent"
                     android:textSize="28sp"
                     android:textStyle="bold" />
 
@@ -83,7 +90,7 @@
                     android:paddingEnd="2dp"
                     android:paddingBottom="2dp"
                     android:text="@string/log_in_to_continue"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <EditText
 
@@ -95,13 +102,14 @@
                     android:layout_marginEnd="25dp"
                     android:autofillHints=""
                     android:background="@drawable/background_edit_text"
+
                     android:drawableStart="@drawable/ic_mail_outline"
                     android:drawablePadding="30dp"
                     android:hint="@string/email"
                     android:inputType="textEmailAddress"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textColorHint="#A9A8BC"
                     android:textCursorDrawable="@color/white"
                     android:textSize="18sp" />
@@ -121,7 +129,7 @@
                     android:inputType="textPassword"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textColorHint="#A9A8BC"
                     android:textCursorDrawable="@color/white"
                     android:textSize="18sp" />
@@ -129,7 +137,7 @@
                 <Button
                     android:id="@+id/btn_login"
                     android:layout_width="match_parent"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
                     android:layout_marginTop="50dp"
                     android:layout_marginEnd="25dp"
@@ -158,7 +166,7 @@
                         android:paddingEnd="0dp"
                         android:paddingBottom="2dp"
                         android:text="@string/don_t_have_an_account"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         android:textSize="19sp"
                         tools:ignore="NestedWeights" />
 
@@ -177,7 +185,7 @@
                         android:paddingEnd="4dp"
                         android:paddingBottom="2dp"
                         android:text="@string/register"
-                        android:textColor="#63FF90"
+                        android:textColor="@color/colorAccent"
                         android:textSize="19sp" />
                 </RelativeLayout>
 
@@ -196,13 +204,14 @@
                     android:layout_height="0.3dp"
                     android:background="#727180"
                     android:layout_alignParentTop="true"/>
+
                 <TextView
                     android:id="@+id/tv_forget_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/view_a"
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/view_a"
                     android:clickable="true"
                     android:focusable="true"
                     android:fontFamily="@font/kaushan"
@@ -212,7 +221,7 @@
                     android:paddingEnd="10dp"
                     android:paddingBottom="4dp"
                     android:text="@string/forgot_your_password"
-                    android:textColor="#63FF90"
+                    android:textColor="@color/colorAccent"
                     android:textSize="16.5sp" />
                 <View
                     android:layout_below="@+id/tv_forget_password"

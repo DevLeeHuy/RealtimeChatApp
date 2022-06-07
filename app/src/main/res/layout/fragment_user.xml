@@ -12,19 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="15dp"
-        android:maxLines="1"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/background_edit_text_search"
+        android:background="@drawable/background_edit_text"
+        android:drawableEnd="@drawable/ic_baseline_search_24"
+        android:focusedByDefault="false"
         android:hint="@string/search"
         android:inputType="text"
+        android:maxLines="1"
         android:paddingStart="15dp"
-        android:focusedByDefault="false"
         android:paddingEnd="10dp"
         android:textColor="@color/black"
         android:textColorHint="#797B7E"
-        android:textSize="15sp"
-        android:drawableEnd="@drawable/ic_baseline_search_24"/>
+        android:textSize="15sp" />
 
     <androidx.recyclerview.widget.RecyclerView
 

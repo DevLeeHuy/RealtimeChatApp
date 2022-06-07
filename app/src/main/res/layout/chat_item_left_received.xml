@@ -14,20 +14,20 @@
         android:maxWidth="270dp"
         android:padding="14dp"
         android:text="@string/a_sample_message"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tv_chat_time_received"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/tv_chat_received"
         android:layout_centerVertical="true"
         android:layout_marginStart="7dp"
-        android:textSize="12sp"
+        android:layout_toEndOf="@id/tv_chat_received"
+        android:alpha="0.5"
         android:text="@string/_9_00_pm"
-        android:textColor="@color/white"
-        android:alpha="0.5"/>
+        android:textColor="@color/black"
+        android:textSize="12sp" />
     <TextView
         android:id="@+id/tv_seen"
         android:layout_width="wrap_content"

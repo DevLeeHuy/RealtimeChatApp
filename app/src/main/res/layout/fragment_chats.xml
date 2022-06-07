@@ -22,21 +22,20 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
-            android:contentDescription="@string/todo"
-            android:src="@drawable/ic_empty_chat_view" />
+            android:src="@drawable/empty_message" />
+            android:contentDescription="@string/todo" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/iv_chat_fragment_empty"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:layout_marginTop="30dp"
-            android:textSize="25sp"
-            android:text="@string/once_you_start_chatting_all_your_chat_appear_here"
-            android:fontFamily="@font/pacifico"
-            android:textColor="@color/white"
-           />
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/iv_chat_fragment_empty"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:layout_marginTop="30dp"-->
+<!--            android:fontFamily="@font/pacifico"-->
+<!--            android:gravity="center"-->
+<!--            android:text="@string/once_you_start_chatting_all_your_chat_appear_here"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="25sp" />-->
 
     </RelativeLayout>
 

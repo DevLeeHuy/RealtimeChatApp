@@ -132,7 +132,6 @@ public class LoginActivity extends AppCompatActivity {
                 et_pwdLogIn.setClickable(true);
                 et_emailIdLogIn.setClickable(true);
                 textToSignUp.setClickable(true);
-
                 et_emailIdLogIn.setText("");
                 et_pwdLogIn.setText("");
                 et_emailIdLogIn.requestFocus();
