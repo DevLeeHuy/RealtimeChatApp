@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -84,7 +85,7 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
 
         userId_receiver = getIntent().getStringExtra("userid");
-
+        Log.e("TAG", userId_receiver );
         init();
         getCurrentFirebaseUser();
         fetchAndSaveCurrentProfileTextAndData();
@@ -243,7 +244,7 @@ public class MessageActivity extends AppCompatActivity {
                 Users users = dataSnapshot.getValue(Users.class);
                 assert users != null;
                 if (notify) {
-                    sendNotification(userId_receiver, users.getUsername(), msg);
+//                    sendNotification(userId_receiver, users.getUsername(), msg);
 
                 }
                 notify = false;
@@ -305,7 +306,7 @@ public class MessageActivity extends AppCompatActivity {
                 .get(LogInViewModel.class);
         context = MessageActivity.this;
 
-        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+//        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         iv_user_status_message_view = findViewById(R.id.iv_user_status_message_view);
         iv_profile_image = findViewById(R.id.iv_user_image);
@@ -361,6 +362,5 @@ public class MessageActivity extends AppCompatActivity {
         addStatusInDatabase("offline");
         currentUser("none");
     }
-
 
 }

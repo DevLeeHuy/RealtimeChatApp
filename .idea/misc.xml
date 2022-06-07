@@ -7,7 +7,7 @@
         <entry key="app/src/main/res/layout/activity_message.xml" value="0.2803951367781155" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.19429347826086957" />
         <entry key="app/src/main/res/layout/chat_item_right_sent.xml" value="0.16236068895643363" />
-        <entry key="app/src/main/res/layout/fragment_bottom_sheet_bio_username_update.xml" value="0.15780141843971632" />
+        <entry key="app/src/main/res/layout/fragment_bottom_sheet_bio_username_update.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_bottom_sheet_show_profile.xml" value="0.2759259259259259" />
         <entry key="app/src/main/res/layout/fragment_chats.xml" value="0.2759259259259259" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.16236068895643363" />
