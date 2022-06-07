@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Log.e("clg", "onCreate: " );
         init();
         getUserSession();
         listener();
@@ -68,14 +67,14 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void getUserSession() {
         logInViewModel.getFirebaseUserLogInStatus();
-//        logInViewModel.firebaseUserLoginStatus.observe(this, firebaseUser -> {
-//            currentUser = firebaseUser;
-//            if (currentUser != null) {
-//                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
+        logInViewModel.firebaseUserLoginStatus.observe(this, firebaseUser -> {
+            currentUser = firebaseUser;
+            if (currentUser != null) {
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
 
     }
