@@ -151,7 +151,7 @@ public class FirebaseInstanceDatabase {
         return fetchUserChat;
     }
 
-    public MutableLiveData<Boolean> addChatsInDatabase(String receiverId, String senderId, String message, String timestamp) {
+    public MutableLiveData<Boolean> addChatsInDatabase(String receiverId, String senderId, String message, String timestamp,String type) {
         final MutableLiveData<Boolean> successAddChatsDb = new MutableLiveData<>();
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -160,6 +160,7 @@ public class FirebaseInstanceDatabase {
         hashMap.put("message", message);
         hashMap.put("timestamp", timestamp);
         hashMap.put("seen", false);
+        hashMap.put("type",type);
 
         instance.getReference("Chats").push().setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

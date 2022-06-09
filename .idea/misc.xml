@@ -31,11 +31,11 @@
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16236068895643363" />
-        <entry key="app/src/main/res/layout/activity_message.xml" value="0.2803951367781155" />
+        <entry key="app/src/main/res/layout/activity_message.xml" value="0.1798063623789765" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.16236068895643363" />
-        <entry key="app/src/main/res/layout/chat_item_left_received.xml" value="0.3338541666666667" />
-        <entry key="app/src/main/res/layout/chat_item_right_sent.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/chat_item_left_received.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/chat_item_right_sent.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_bottom_sheet_bio_username_update.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_bottom_sheet_show_profile.xml" value="0.2759259259259259" />
         <entry key="app/src/main/res/layout/fragment_chats.xml" value="0.2759259259259259" />

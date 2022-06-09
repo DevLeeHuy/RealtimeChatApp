@@ -1,6 +1,7 @@
 package hcmute.spkt.truongminhhoang.zaloclone.view.ui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -10,7 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -38,6 +45,7 @@ import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.Data;
 import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.MyResponse;
 import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.Sender;
 import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.Token;
+import hcmute.spkt.truongminhhoang.zaloclone.utils.ImageConvert;
 import hcmute.spkt.truongminhhoang.zaloclone.view.adapters.MessageAdapter;
 import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.APIService;
 import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.BottomSheetProfileDetailUser;
@@ -63,18 +71,21 @@ public class MessageActivity extends AppCompatActivity {
 
     EditText et_chat;
     ImageView btn_sendIv;
-
+    ImageView btn_collections;
+    ImageView btn_record;
+    static final int PICK_IMAGE=1;
     String chat;
     String timeStamp;
     String userId_receiver; // userId of other user who'll receive the text // Or the user id of profile currently opened
     String userId_sender;  // current user id
+    String type;
     String user_status;
     MessageAdapter messageAdapter;
     ArrayList<Chats> chatsArrayList;
     RecyclerView recyclerView;
     Context context;
     BottomSheetProfileDetailUser bottomSheetProfileDetailUser;
-
+    Uri imageUri;
     APIService apiService;
     boolean notify = false;
 
@@ -106,6 +117,7 @@ public class MessageActivity extends AppCompatActivity {
 
                 chat = et_chat.getText().toString().trim();
                 if (!chat.equals("")) {
+                    type="text";
                     addChatInDataBase();
                 } else {
                     Toast.makeText(MessageActivity.this, "Message can't be empty.", Toast.LENGTH_SHORT).show();
@@ -113,6 +125,74 @@ public class MessageActivity extends AppCompatActivity {
                 et_chat.setText("");
             }
         });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==PICK_IMAGE && resultCode== RESULT_OK){
+            imageUri=data.getData();
+            try {
+                Bitmap bitmap= MediaStore.Images.Media.getBitmap(getContentResolver(),imageUri);
+                type="image";
+                chat= ImageConvert.getEncoded64ImageStringFromBitmap(bitmap);
+                 addChatInDataBase();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void init() {
+        databaseViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()))
+                .get(DatabaseViewModel.class);
+        logInViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()))
+                .get(LogInViewModel.class);
+        context = MessageActivity.this;
+
+//        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
+        iv_user_status_message_view = findViewById(R.id.iv_user_status_message_view);
+        iv_profile_image = findViewById(R.id.iv_user_image);
+
+        tv_profile_user_name = findViewById(R.id.tv_profile_user_name);
+        iv_back_button = findViewById(R.id.iv_back_button);
+
+        iv_back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        btn_collections=findViewById(R.id.iv_collections);
+        btn_collections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery = new Intent();
+                gallery.setType("image/*");
+                gallery.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(gallery,"Sellect Picture"),PICK_IMAGE);
+
+            }
+        });
+
+        et_chat = findViewById(R.id.et_chat);
+        btn_sendIv = findViewById(R.id.iv_send_button);
+
+        recyclerView = findViewById(R.id.recycler_view_messages_record);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        chatsArrayList = new ArrayList<>();
+
 
     }
 
@@ -207,12 +287,12 @@ public class MessageActivity extends AppCompatActivity {
                 chatsArrayList.clear();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
                     Chats chats = snapshot.getValue(Chats.class);
                     assert chats != null;
                     if (chats.getReceiverId().equals(senderId) && chats.getSenderId().equals(myId) || chats.getReceiverId().equals(myId) && chats.getSenderId().equals(senderId)) {
                         chatsArrayList.add(chats);
                     }
-
                     messageAdapter = new MessageAdapter(chatsArrayList, context, userId_sender);
                     recyclerView.setAdapter(messageAdapter);
                 }
@@ -224,7 +304,7 @@ public class MessageActivity extends AppCompatActivity {
 
         long tsLong = System.currentTimeMillis();
         timeStamp = Long.toString(tsLong);
-        databaseViewModel.addChatDb(userId_receiver, userId_sender, chat, timeStamp);
+        databaseViewModel.addChatDb(userId_receiver, userId_sender, chat, timeStamp,type);
         databaseViewModel.successAddChatDb.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -298,45 +378,6 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-
-    private void init() {
-        databaseViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()))
-                .get(DatabaseViewModel.class);
-        logInViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()))
-                .get(LogInViewModel.class);
-        context = MessageActivity.this;
-
-//        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
-
-        iv_user_status_message_view = findViewById(R.id.iv_user_status_message_view);
-        iv_profile_image = findViewById(R.id.iv_user_image);
-
-        tv_profile_user_name = findViewById(R.id.tv_profile_user_name);
-        iv_back_button = findViewById(R.id.iv_back_button);
-
-        iv_back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        et_chat = findViewById(R.id.et_chat);
-        btn_sendIv = findViewById(R.id.iv_send_button);
-
-        recyclerView = findViewById(R.id.recycler_view_messages_record);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        linearLayoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        chatsArrayList = new ArrayList<>();
-
-
-    }
 
     private void currentUser(String userid){
         SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();

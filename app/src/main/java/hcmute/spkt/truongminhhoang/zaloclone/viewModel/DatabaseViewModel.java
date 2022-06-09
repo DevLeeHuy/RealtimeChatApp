@@ -53,8 +53,8 @@ public class DatabaseViewModel extends ViewModel {
         fetchSelectedProfileUserData = instance.fetchSelectedUserIdData(userId);
     }
 
-    public void addChatDb(String receiverId,String senderId, String message, String timestamp) {
-        successAddChatDb = instance.addChatsInDatabase(receiverId, senderId, message, timestamp);
+    public void addChatDb(String receiverId,String senderId, String message, String timestamp,String type) {
+        successAddChatDb = instance.addChatsInDatabase(receiverId, senderId, message, timestamp,type);
     }
 
     public void fetchChatUser() {

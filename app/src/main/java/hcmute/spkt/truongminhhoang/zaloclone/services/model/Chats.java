@@ -6,13 +6,15 @@ public class Chats {
     private String message;
     private String timestamp;
     private boolean seen;
+    private String type;
 
-    public Chats(String receiverId, String senderId, String message, String timestamp, boolean seen) {
+    public Chats(String receiverId, String senderId, String message, String timestamp, boolean seen,String type) {
         this.receiverId = receiverId;
         this.senderId = senderId;
         this.message = message;
         this.timestamp = timestamp;
         this.seen = seen;
+        this.type=type;
     }
 
     public Chats() {
@@ -51,6 +53,13 @@ public class Chats {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getTimestamp() {
