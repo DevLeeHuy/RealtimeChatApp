@@ -17,6 +17,7 @@
         <entry key="app/src/main/res/drawable/forgot_password_bg.xml" value="0.156" />
         <entry key="app/src/main/res/drawable/ic_baseline_camera_alt_24.xml" value="0.156" />
         <entry key="app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.156" />
+        <entry key="app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_textsms_24.xml" value="0.156" />
         <entry key="app/src/main/res/drawable/ic_empty_chat_view.xml" value="0.156" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.156" />
@@ -31,10 +32,10 @@
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16236068895643363" />
-        <entry key="app/src/main/res/layout/activity_message.xml" value="0.1798063623789765" />
+        <entry key="app/src/main/res/layout/activity_message.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.16236068895643363" />
-        <entry key="app/src/main/res/layout/chat_item_left_received.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/chat_item_left_received.xml" value="0.1" />
         <entry key="app/src/main/res/layout/chat_item_right_sent.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_bottom_sheet_bio_username_update.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_bottom_sheet_show_profile.xml" value="0.2759259259259259" />
