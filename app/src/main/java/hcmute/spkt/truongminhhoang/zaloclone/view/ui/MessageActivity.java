@@ -85,7 +85,9 @@ public class MessageActivity extends AppCompatActivity {
     ImageView btn_sendIv;
     ImageView btn_collections;
     ImageView btn_record;
+    ImageView btn_camera;
     static final int PICK_IMAGE = 1;
+    static final int CAPTURE_IMAGE=2;
     String chat;
     String timeStamp;
     String userId_receiver; // userId of other user who'll receive the text // Or the user id of profile currently opened
@@ -155,6 +157,12 @@ public class MessageActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        else if(requestCode==CAPTURE_IMAGE && resultCode==RESULT_OK){
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            type = "image";
+            chat = ImageConvert.getEncoded64ImageStringFromBitmap(bitmap);
+            addChatInDataBase();
+        }
     }
 
     private void init() {
@@ -191,11 +199,23 @@ public class MessageActivity extends AppCompatActivity {
                 gallery.setType("image/*");
                 gallery.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(gallery, "Sellect Picture"), PICK_IMAGE);
+            }
+        });
+        btn_camera=findViewById(R.id.iv_camera);
+        btn_camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ContextCompat.checkSelfPermission(MessageActivity.this,Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(MessageActivity.this,new String[]{
+                            Manifest.permission.CAMERA
+                    },CAPTURE_IMAGE);
+                }
+                Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent,CAPTURE_IMAGE);
 
             }
         });
         btn_record = findViewById(R.id.iv_record);
-
         btn_record.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
