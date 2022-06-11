@@ -3,21 +3,30 @@ package hcmute.spkt.truongminhhoang.zaloclone.view.ui;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,7 +42,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -73,7 +85,9 @@ public class MessageActivity extends AppCompatActivity {
     ImageView btn_sendIv;
     ImageView btn_collections;
     ImageView btn_record;
-    static final int PICK_IMAGE=1;
+    ImageView btn_camera;
+    static final int PICK_IMAGE = 1;
+    static final int CAPTURE_IMAGE=2;
     String chat;
     String timeStamp;
     String userId_receiver; // userId of other user who'll receive the text // Or the user id of profile currently opened
@@ -88,15 +102,15 @@ public class MessageActivity extends AppCompatActivity {
     Uri imageUri;
     APIService apiService;
     boolean notify = false;
-
-
+    private static int MICROPHONE_PERMISSION_CODE = 200;
+    MediaRecorder mediaRecorder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
         userId_receiver = getIntent().getStringExtra("userid");
-        Log.e("TAG", userId_receiver );
+        Log.e("TAG", userId_receiver);
         init();
         getCurrentFirebaseUser();
         fetchAndSaveCurrentProfileTextAndData();
@@ -117,7 +131,7 @@ public class MessageActivity extends AppCompatActivity {
 
                 chat = et_chat.getText().toString().trim();
                 if (!chat.equals("")) {
-                    type="text";
+                    type = "text";
                     addChatInDataBase();
                 } else {
                     Toast.makeText(MessageActivity.this, "Message can't be empty.", Toast.LENGTH_SHORT).show();
@@ -131,17 +145,23 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==PICK_IMAGE && resultCode== RESULT_OK){
-            imageUri=data.getData();
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+            imageUri = data.getData();
             try {
-                Bitmap bitmap= MediaStore.Images.Media.getBitmap(getContentResolver(),imageUri);
-                type="image";
-                chat= ImageConvert.getEncoded64ImageStringFromBitmap(bitmap);
-                 addChatInDataBase();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                type = "image";
+                chat = ImageConvert.getEncoded64ImageStringFromBitmap(bitmap);
+                addChatInDataBase();
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        else if(requestCode==CAPTURE_IMAGE && resultCode==RESULT_OK){
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            type = "image";
+            chat = ImageConvert.getEncoded64ImageStringFromBitmap(bitmap);
+            addChatInDataBase();
         }
     }
 
@@ -171,17 +191,63 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        btn_collections=findViewById(R.id.iv_collections);
+        btn_collections = findViewById(R.id.iv_collections);
         btn_collections.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent gallery = new Intent();
                 gallery.setType("image/*");
                 gallery.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(gallery,"Sellect Picture"),PICK_IMAGE);
+                startActivityForResult(Intent.createChooser(gallery, "Sellect Picture"), PICK_IMAGE);
+            }
+        });
+        btn_camera=findViewById(R.id.iv_camera);
+        btn_camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ContextCompat.checkSelfPermission(MessageActivity.this,Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(MessageActivity.this,new String[]{
+                            Manifest.permission.CAMERA
+                    },CAPTURE_IMAGE);
+                }
+                Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent,CAPTURE_IMAGE);
 
             }
         });
+        btn_record = findViewById(R.id.iv_record);
+        btn_record.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (isMicrophonePresent()) {
+                        try {
+                            getMicrophonePermission();
+                            mediaRecorder = new MediaRecorder();
+                            mediaRecorder.setAudioSource((MediaRecorder.AudioSource.MIC));
+                            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                            mediaRecorder.setOutputFile(getRecordingFilePath());
+                            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                            mediaRecorder.prepare();
+                            mediaRecorder.start();
+                        }catch (Exception e){
+                            Log.e("Error", e.toString());
+                        }
+                    }
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mediaRecorder.stop();
+                    mediaRecorder.release();
+                    mediaRecorder = null;
+                    chat=convert(getRecordingFilePath());
+                    type="audio";
+                    addChatInDataBase();
+
+                }
+                return true;
+            }
+        });
+
+
 
         et_chat = findViewById(R.id.et_chat);
         btn_sendIv = findViewById(R.id.iv_send_button);
@@ -194,6 +260,48 @@ public class MessageActivity extends AppCompatActivity {
         chatsArrayList = new ArrayList<>();
 
 
+    }
+
+
+    public String convert(String path) {
+        byte[] audioBytes;
+        try {
+
+            // Just to check file size.. Its is correct i-e; Not Zero
+            File audioFile = new File(path);
+            long fileSize = audioFile.length();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            FileInputStream fis = new FileInputStream(new File(path));
+            byte[] buf = new byte[1024];
+            int n;
+            while (-1 != (n = fis.read(buf)))
+                baos.write(buf, 0, n);
+            audioBytes = baos.toByteArray();
+
+            // Here goes the Base64 string
+            String audioBase64 = Base64.encodeToString(audioBytes, Base64.DEFAULT);
+        return audioBase64;
+        } catch (Exception e) {
+            Log.e("TAG", e.toString() );
+            return null;
+        }
+    }
+    private String getRecordingFilePath() {
+        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+        File musicDirectory = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+        File file = new File(musicDirectory, "testRecordingFIle" + ".mp3");
+        return file.getPath();
+    }
+
+    private boolean isMicrophonePresent() {
+        return this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE);
+    }
+
+    private void getMicrophonePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
+
+        }
     }
 
     private void openBottomSheetDetailFragment(String username, String imageUrl, String bio) {
@@ -214,10 +322,9 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-
     private void fetchAndSaveCurrentProfileTextAndData() {
-        if(userId_receiver == null){
-            userId_receiver=  getIntent().getStringExtra("userId");
+        if (userId_receiver == null) {
+            userId_receiver = getIntent().getStringExtra("userId");
         }
         databaseViewModel.fetchSelectedUserProfileData(userId_receiver);
         databaseViewModel.fetchSelectedProfileUserData.observe(this, new Observer<DataSnapshot>() {
@@ -304,7 +411,7 @@ public class MessageActivity extends AppCompatActivity {
 
         long tsLong = System.currentTimeMillis();
         timeStamp = Long.toString(tsLong);
-        databaseViewModel.addChatDb(userId_receiver, userId_sender, chat, timeStamp,type);
+        databaseViewModel.addChatDb(userId_receiver, userId_sender, chat, timeStamp, type);
         databaseViewModel.successAddChatDb.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -379,7 +486,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    private void currentUser(String userid){
+    private void currentUser(String userid) {
         SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
         editor.putString("currentuser", userid);
         editor.apply();
