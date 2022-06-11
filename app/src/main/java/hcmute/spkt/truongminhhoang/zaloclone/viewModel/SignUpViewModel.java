@@ -18,8 +18,8 @@ public class SignUpViewModel extends ViewModel {
         signUpInstance = new FirebaseSignUpInstance();
     }
 
-    public void userSignIn(String userNameSignIn, String emailSignIn, String passwordSignIn) {
-        signInUser = signUpInstance.signInUser(userNameSignIn, emailSignIn, passwordSignIn);
+    public void userSignIn(String userNameSignIn, String phoneNumber, String emailSignIn, String passwordSignIn) {
+        signInUser = signUpInstance.signInUser(userNameSignIn, phoneNumber, emailSignIn, passwordSignIn);
     }
 
 

@@ -25,6 +25,7 @@ import hcmute.spkt.truongminhhoang.zaloclone.R;
 import hcmute.spkt.truongminhhoang.zaloclone.services.model.Users;
 import hcmute.spkt.truongminhhoang.zaloclone.view.adapters.ViewPagerAdapter;
 import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.ChatFragment;
+import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.ContactFragment;
 import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.ProfileFragment;
 import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.UserFragment;
 import hcmute.spkt.truongminhhoang.zaloclone.viewModel.DatabaseViewModel;
@@ -61,6 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), ViewPagerAdapter.POSITION_UNCHANGED);
 
         viewPagerAdapter.addFragment(new ChatFragment(this), "Chats");
+        viewPagerAdapter.addFragment(new ContactFragment(this), "Contacts");
         viewPagerAdapter.addFragment(new UserFragment(this), "Users");
         viewPagerAdapter.addFragment(new ProfileFragment(this), "Profile");
 

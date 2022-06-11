@@ -2,12 +2,10 @@ package hcmute.spkt.truongminhhoang.zaloclone.services.model;
 
 
 public class Users {
-
-
-
-    public Users(String id, String username, String emailId, String timestamp, String imageUrl, String bio,String status) {
+    public Users(String id, String username, String phoneNumber, String emailId, String timestamp, String imageUrl, String bio, String status) {
         this.id = id;
         this.username = username;
+        this.phoneNumber = phoneNumber;
         this.emailId = emailId;
         this.timestamp = timestamp;
         this.imageUrl = imageUrl;
@@ -29,6 +27,14 @@ public class Users {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getEmailId() {
@@ -71,25 +77,19 @@ public class Users {
         this.status = status;
     }
 
-
     private String id;
     private String username;
+    private String phoneNumber;
     private String emailId;
     private String timestamp;
     private String imageUrl;
     private String bio;
 
-
-
     private String status;
-
-
 
     public Users() {
 
     }
-
-
 
 
 }

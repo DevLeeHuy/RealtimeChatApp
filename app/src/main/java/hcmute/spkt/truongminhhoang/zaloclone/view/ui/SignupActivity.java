@@ -30,6 +30,7 @@ import java.util.Objects;
 public class SignupActivity extends AppCompatActivity {
 
     EditText et_usernameSignIn;
+    EditText et_phoneSignIn;
     EditText et_emailIdSignIn;
     EditText et_pwdSignIn;
     Button btn_signIn;
@@ -39,6 +40,7 @@ public class SignupActivity extends AppCompatActivity {
     String emailId;
     String pwd;
     String userName;
+    String phoneNumber;
     Context context;
     String userId;
     String imageUrl;
@@ -55,6 +57,7 @@ public class SignupActivity extends AppCompatActivity {
     }
     private void init() {
         et_usernameSignIn = findViewById(R.id.et_signin_username);
+        et_phoneSignIn = findViewById(R.id.et_signin_phone);
         et_emailIdSignIn = findViewById(R.id.et_signin_email);
         et_pwdSignIn = findViewById(R.id.et_signin_password);
         btn_signIn = findViewById(R.id.btn_signin);
@@ -76,6 +79,7 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 et_usernameSignIn.clearFocus();
+                et_phoneSignIn.clearFocus();
                 et_emailIdSignIn.clearFocus();
                 et_pwdSignIn.clearFocus();
                 v.startAnimation(buttonClick);
@@ -83,12 +87,16 @@ public class SignupActivity extends AppCompatActivity {
                 emailId = et_emailIdSignIn.getText().toString();
                 pwd = et_pwdSignIn.getText().toString();
                 userName = et_usernameSignIn.getText().toString();
-                if ((pwd.isEmpty() && emailId.isEmpty() && userName.isEmpty())) {
+                phoneNumber = et_phoneSignIn.getText().toString();
+                if ((pwd.isEmpty() && emailId.isEmpty() && userName.isEmpty() && phoneNumber.isEmpty())) {
                     Toast.makeText(SignupActivity.this, "Fields are empty!", Toast.LENGTH_SHORT).show();
                     et_usernameSignIn.requestFocus();
                 } else if (userName.isEmpty()) {
                     et_usernameSignIn.setError("Please enter a username.");
                     et_usernameSignIn.requestFocus();
+                } else if (phoneNumber.isEmpty()) {
+                    et_phoneSignIn.setError("Please set your phone.");
+                    et_phoneSignIn.requestFocus();
                 } else if (emailId.isEmpty()) {
                     et_emailIdSignIn.setError("Please enter your Email Id.");
                     et_emailIdSignIn.requestFocus();
@@ -98,6 +106,7 @@ public class SignupActivity extends AppCompatActivity {
                 } else {
                     progressBarSignInFrame.setVisibility(View.VISIBLE);
                     et_usernameSignIn.setClickable(false);
+                    et_phoneSignIn.setClickable(false);
                     et_emailIdSignIn.setClickable(false);
                     et_pwdSignIn.setClickable(false);
                     textToLogin.setClickable(false);
@@ -119,12 +128,13 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void signInUsers() {
-        signUpViewModel.userSignIn(userName, emailId, pwd);
+        signUpViewModel.userSignIn(userName, phoneNumber, emailId, pwd);
         signUpViewModel.signInUser.observe(this, new Observer<Task>() {
             @Override
             public void onChanged(Task task) {
                 if (!task.isSuccessful()) {
                     et_usernameSignIn.setClickable(true);
+                    et_phoneSignIn.setClickable(true);
                     et_emailIdSignIn.setClickable(true);
                     et_pwdSignIn.setClickable(true);
                     textToLogin.setClickable(true);
@@ -133,7 +143,7 @@ public class SignupActivity extends AppCompatActivity {
                     et_emailIdSignIn.setText("");
                     et_pwdSignIn.setText("");
                     et_usernameSignIn.setText("");
-                    et_usernameSignIn.requestFocus();
+                    et_phoneSignIn.requestFocus();
 
                     try {
                         throw Objects.requireNonNull(task.getException());
@@ -149,7 +159,7 @@ public class SignupActivity extends AppCompatActivity {
 
                 } else {
                     getUserSession();
-                    addUserInDatabase(userName, emailId, userId);
+                    addUserInDatabase(userName, phoneNumber, emailId, userId);
                     Intent intent = new Intent(SignupActivity.this, HomeActivity.class);
                     startActivity(intent);
                     finish();
@@ -159,12 +169,12 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private void addUserInDatabase(String userName, String email, String idUser) {
+    private void addUserInDatabase(String userName, String phoneNumber, String email, String idUser) {
         long tsLong = System.currentTimeMillis();
         timeStamp = Long.toString(tsLong);
         imageUrl = "default";
         userId = currentUser.getUid();
-        databaseViewModel.addUserDatabase(userId, userName, email, timeStamp, imageUrl);
+        databaseViewModel.addUserDatabase(userId, userName, phoneNumber, email, timeStamp, imageUrl);
         databaseViewModel.successAddUserDb.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {

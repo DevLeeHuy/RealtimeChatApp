@@ -14,7 +14,7 @@ public class FirebaseSignUpInstance {
     private FirebaseUser firebaseUser;
     public MutableLiveData<FirebaseUser> firebaseUsers = new MutableLiveData<>();
 
-    public MutableLiveData<Task> signInUser(String userNameSignIn, String emailSignIn, String passwordSignIn) {
+    public MutableLiveData<Task> signInUser(String userNameSignIn, String phoneNumber, String emailSignIn, String passwordSignIn) {
         final MutableLiveData<Task> taskSignIn = new MutableLiveData<>();
         mAuth.createUserWithEmailAndPassword(emailSignIn, passwordSignIn).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
