@@ -10,6 +10,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import hcmute.spkt.truongminhhoang.zaloclone.services.repository.FirebaseInstanceDatabase;
 
 public class DatabaseViewModel extends ViewModel {
@@ -25,7 +28,7 @@ public class DatabaseViewModel extends ViewModel {
     public LiveData<Boolean> successAddUsernameInDatabase;
     public LiveData<Boolean> successAddBioInDatabase;
     public LiveData<Boolean> successAddStatusInDatabase;
-    public LiveData<DataSnapshot> fetchSearchUser;
+    public List<LiveData<DataSnapshot>>fetchSearchUser = new ArrayList<>();
     public LiveData<Boolean> successAddIsSeen;
     public LiveData<DataSnapshot> getChaListUserDataSnapshot;
     public LiveData<DatabaseReference> getTokenRefDb;
@@ -37,8 +40,8 @@ public class DatabaseViewModel extends ViewModel {
         instance = new FirebaseInstanceDatabase();
     }
 
-    public void addUserDatabase(String userId, String userName, String emailId, String timestamp, String imageUrl) {
-        successAddUserDb = instance.addUserInDatabase(userId, userName, emailId, timestamp, imageUrl);
+    public void addUserDatabase(String userId, String userName, String phoneNumber, String emailId, String timestamp, String imageUrl) {
+        successAddUserDb = instance.addUserInDatabase(userId, userName, phoneNumber, emailId, timestamp, imageUrl);
     }
 
     public void fetchingUserDataCurrent() {
@@ -82,7 +85,8 @@ public class DatabaseViewModel extends ViewModel {
     }
 
     public void fetchSearchedUser(String searchQuery){
-        fetchSearchUser = instance.fetchSearchUser(searchQuery);
+        fetchSearchUser.add(instance.fetchSearchUser(searchQuery, "searchName"));
+        fetchSearchUser.add(instance.fetchSearchUser(searchQuery, "searchPhone"));
     }
 
     public void addIsSeenInDatabase(String isSeen,DataSnapshot dataSnapshot){
