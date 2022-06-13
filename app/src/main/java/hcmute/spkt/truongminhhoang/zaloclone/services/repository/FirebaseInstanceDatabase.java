@@ -8,6 +8,7 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import hcmute.spkt.truongminhhoang.zaloclone.services.model.Chats;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,7 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class FirebaseInstanceDatabase {
@@ -376,5 +379,66 @@ public class FirebaseInstanceDatabase {
         });
 
         return successAddUserDb;
+    }
+
+    public MutableLiveData<Boolean> addSettingInDatabase(String date, String second) {
+        final MutableLiveData<Boolean> success = new MutableLiveData<>();
+
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("userId", firebaseUser.getUid());
+        hashMap.put("date", date);
+        hashMap.put("second", second);
+
+        instance.getReference("Settings").setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                success.setValue(true);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                success.setValue(false);
+            }
+        });
+
+        return success;
+    }
+
+    public MutableLiveData<DataSnapshot> fetchSettingDataCurrent() {
+        final MutableLiveData<DataSnapshot> fetchSettingData = new MutableLiveData<>();
+
+        instance.getReference("Settings").orderByChild("userId")
+                .startAt(firebaseUser.getUid())
+                .endAt(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                fetchSettingData.setValue(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        return fetchSettingData;
+    }
+
+    public void autoClearOutOfDateItems(long timestamp) {
+        instance.getReference("Chats").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Chats chats = dataSnapshot.getValue(Chats.class);
+                assert chats != null;
+                if (!chats.getType().equals("text") && Long.parseLong(chats.getTimestamp()) < timestamp) {
+                    instance.getReference("Users").child(chats.getTimestamp()).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

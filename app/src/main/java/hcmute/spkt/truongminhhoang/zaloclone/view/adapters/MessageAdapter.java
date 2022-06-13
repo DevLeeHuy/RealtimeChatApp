@@ -143,7 +143,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
 
         Date date = new Date(timeStamp);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat jdf = new SimpleDateFormat("hh:mm a");
-        jdf.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+        jdf.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         return jdf.format(date);
 
     }

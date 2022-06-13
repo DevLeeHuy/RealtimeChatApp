@@ -120,6 +120,11 @@ public class HomeActivity extends AppCompatActivity {
                     getUserAuthToSignOut();
                     Toast.makeText(HomeActivity.this, "Logged out", Toast.LENGTH_SHORT).show();
                     return true;
+                } else if (item.getItemId() == R.id.setting) {
+                    Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
                 } else {
                     return false;
                 }
