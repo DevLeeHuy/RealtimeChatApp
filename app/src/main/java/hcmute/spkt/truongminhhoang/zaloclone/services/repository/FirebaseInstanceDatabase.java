@@ -385,11 +385,10 @@ public class FirebaseInstanceDatabase {
         final MutableLiveData<Boolean> success = new MutableLiveData<>();
 
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("userId", firebaseUser.getUid());
         hashMap.put("date", date);
         hashMap.put("second", second);
 
-        instance.getReference("Settings").setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+        instance.getReference("Settings").child(firebaseUser.getUid()).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 success.setValue(true);
@@ -407,9 +406,7 @@ public class FirebaseInstanceDatabase {
     public MutableLiveData<DataSnapshot> fetchSettingDataCurrent() {
         final MutableLiveData<DataSnapshot> fetchSettingData = new MutableLiveData<>();
 
-        instance.getReference("Settings").orderByChild("userId")
-                .startAt(firebaseUser.getUid())
-                .endAt(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+       instance.getReference("Settings").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 fetchSettingData.setValue(dataSnapshot);

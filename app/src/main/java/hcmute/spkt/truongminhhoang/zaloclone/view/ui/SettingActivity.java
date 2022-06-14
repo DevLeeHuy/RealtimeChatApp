@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import hcmute.spkt.truongminhhoang.zaloclone.R;
 import hcmute.spkt.truongminhhoang.zaloclone.services.repository.FirebaseInstanceDatabase;
@@ -53,6 +55,7 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
+        getSetting();
     }
 
     private void save() {
@@ -74,7 +77,10 @@ public class SettingActivity extends AppCompatActivity {
         instanceDatabase.fetchSettingDataCurrent().observe(this, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(DataSnapshot dataSnapshot) {
-
+                HashMap<String, String>setting = (HashMap<String, String>)dataSnapshot.getValue();
+                assert setting != null;
+                editTextDate.setText(setting.get("date"));
+                editTextSecond.setText(setting.get("second"));
             }
         });
 
