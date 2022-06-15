@@ -421,15 +421,31 @@ public class FirebaseInstanceDatabase {
         return fetchSettingData;
     }
 
-    public void autoClearOutOfDateItems(long timestamp) {
-        instance.getReference("Chats").addValueEventListener(new ValueEventListener() {
+    public void autoClearOutOfDateItems() {
+        Long now = System.currentTimeMillis();
+        instance.getReference("Settings").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Chats chats = dataSnapshot.getValue(Chats.class);
-                assert chats != null;
-                if (!chats.getType().equals("text") && Long.parseLong(chats.getTimestamp()) < timestamp) {
-                    instance.getReference("Users").child(chats.getTimestamp()).removeValue();
-                }
+                HashMap<String, String> setting = (HashMap<String, String>)dataSnapshot.getValue();
+                assert setting != null;
+                instance.getReference("Chats").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Chats chats = dataSnapshot.getValue(Chats.class);
+                        assert chats != null;
+                        Long anchor = setting.get("second").trim().equals("") || setting.get("second").equals("0")
+                                ? Long.parseLong(setting.get("date")) * 86400000
+                                : Long.parseLong(setting.get("second")) * 1000;
+                        if (!chats.getType().equals("text") && Long.parseLong(chats.getTimestamp()) < now - anchor) {
+                            dataSnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override

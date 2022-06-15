@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import de.hdodenhof.circleimageview.CircleImageView;
 import hcmute.spkt.truongminhhoang.zaloclone.R;
 import hcmute.spkt.truongminhhoang.zaloclone.services.model.Users;
+import hcmute.spkt.truongminhhoang.zaloclone.services.repository.FirebaseInstanceDatabase;
 import hcmute.spkt.truongminhhoang.zaloclone.view.adapters.ViewPagerAdapter;
 import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.ChatFragment;
 import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.ContactFragment;
@@ -162,6 +163,8 @@ public class HomeActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(2); // to go to profile fragment
             }
         });
+
+        new FirebaseInstanceDatabase().autoClearOutOfDateItems();
 
     }
 

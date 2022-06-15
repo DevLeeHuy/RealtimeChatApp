@@ -7,6 +7,8 @@ import androidx.lifecycle.Observer;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -28,6 +30,8 @@ public class SettingActivity extends AppCompatActivity {
     private EditText editTextSecond;
     private FirebaseInstanceDatabase instanceDatabase = new FirebaseInstanceDatabase();
 
+    private boolean gotSetting = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +48,9 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        this.editTextDate = (EditText) this.findViewById(R.id.editText_date);
-        this.editTextSecond = (EditText) this.findViewById(R.id.editText_second);
-        Button buttonSave = (Button) this.findViewById(R.id.button_save);
+        editTextDate = (EditText) findViewById(R.id.editText_date);
+        editTextSecond = (EditText) findViewById(R.id.editText_second);
+        Button buttonSave = (Button) findViewById(R.id.button_save);
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +64,7 @@ public class SettingActivity extends AppCompatActivity {
 
     private void save() {
         instanceDatabase
-                .addSettingInDatabase(this.editTextDate.getText().toString(), this.editTextSecond.getText().toString())
+                .addSettingInDatabase(editTextDate.getText().toString(), editTextSecond.getText().toString())
                 .observe(this, new Observer<Boolean>() {
                     @Override
                     public void onChanged(Boolean aBoolean) {
@@ -77,10 +81,13 @@ public class SettingActivity extends AppCompatActivity {
         instanceDatabase.fetchSettingDataCurrent().observe(this, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(DataSnapshot dataSnapshot) {
-                HashMap<String, String>setting = (HashMap<String, String>)dataSnapshot.getValue();
-                assert setting != null;
-                editTextDate.setText(setting.get("date"));
-                editTextSecond.setText(setting.get("second"));
+                if (!gotSetting) {
+                    HashMap<String, String>setting = (HashMap<String, String>)dataSnapshot.getValue();
+                    assert setting != null;
+                    editTextDate.setText(setting.get("date"));
+                    editTextSecond.setText(setting.get("second"));
+                    gotSetting = true;
+                }
             }
         });
 

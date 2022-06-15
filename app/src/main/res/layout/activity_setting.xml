@@ -13,6 +13,8 @@
         android:background="@color/colorAccent"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        app:title="@string/setting"
+        app:titleTextColor="@color/white"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="-3dp" />
 
@@ -20,14 +22,13 @@
         android:id="@+id/editText_date"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:layout_marginEnd="108dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="64dp"
         android:ems="10"
-        android:hint="Input number of days"
+        android:hint="0"
         android:inputType="number"
         android:textSize="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:textAlignment="center"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_setting" />
 
@@ -35,14 +36,13 @@
         android:id="@+id/editText_second"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="108dp"
         android:ems="10"
-        android:hint="Input number of seconds"
+        android:hint="0"
         android:inputType="number"
         android:textSize="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:textAlignment="center"
         app:layout_constraintStart_toEndOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/editText_date" />
 
@@ -51,8 +51,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="416dp"
+        android:layout_marginBottom="340dp"
+        android:background="@color/colorAccent"
         android:text="Save"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.472"
@@ -81,5 +83,19 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="312dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="12dp"
+        android:text="Assests auto deletion time"
+        android:textColor="@color/colorAccent"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_setting" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
