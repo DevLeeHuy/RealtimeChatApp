@@ -154,25 +154,28 @@ public class ContactFragment extends Fragment {
 
     private void syncContact() {
         List<String> contacts = new ArrayList<>();
+try{
+    // Check and get permission to get contacts for local device
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.READ_CONTACTS}, 0);
+    }
 
-        // Check and get permission to get contacts for local device
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.READ_CONTACTS}, 0);
+    ContentResolver contentResolver = context.getContentResolver();
+    Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+    Cursor cursor = contentResolver.query(uri, null, null, null ,null);
+    if (cursor.getCount() > 0) {
+        while (cursor.moveToNext()) {
+            // Get only for number
+            int phoneColIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            String phoneNumber = phoneColIndex > 0 ? cursor.getString(phoneColIndex) : "";
+            contacts.add(phoneNumber);
         }
+    }
 
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        Cursor cursor = contentResolver.query(uri, null, null, null ,null);
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                // Get only for number
-                int phoneColIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                String phoneNumber = phoneColIndex > 0 ? cursor.getString(phoneColIndex) : "";
-                contacts.add(phoneNumber);
-            }
-        }
+    // Use list phone number to get contacts
+    getUserByListContact(contacts);
+}catch (Exception e){
 
-        // Use list phone number to get contacts
-        getUserByListContact(contacts);
+    }
     }
 }

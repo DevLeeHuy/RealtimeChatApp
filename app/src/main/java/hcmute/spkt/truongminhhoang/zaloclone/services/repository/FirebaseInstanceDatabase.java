@@ -446,8 +446,10 @@ public class FirebaseInstanceDatabase {
                                 Chats chats = snapshot.getValue(Chats.class);
 
                                 // Remove if this is an expired image or audio record (compare with anchor equal now - period )
-                                if (chats != null && !chats.getType().equals("text") && Long.parseLong(chats.getTimestamp()) < now - period) {
-                                    snapshot.getRef().removeValue();
+                                if (chats != null){
+                                    if(!chats.getType().equals("text") && Long.parseLong(chats.getTimestamp()) < now - period) {
+                                        snapshot.getRef().removeValue();
+                                    }
                                 }
                             }
                         }

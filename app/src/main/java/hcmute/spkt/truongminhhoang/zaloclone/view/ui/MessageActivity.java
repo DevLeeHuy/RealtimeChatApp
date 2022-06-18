@@ -219,9 +219,10 @@ public class MessageActivity extends AppCompatActivity {
         btn_record.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                try {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     if (isMicrophonePresent()) {
-                        try {
+
                             getMicrophonePermission();
                             mediaRecorder = new MediaRecorder();
                             mediaRecorder.setAudioSource((MediaRecorder.AudioSource.MIC));
@@ -230,9 +231,7 @@ public class MessageActivity extends AppCompatActivity {
                             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
                             mediaRecorder.prepare();
                             mediaRecorder.start();
-                        }catch (Exception e){
-                            Log.e("Error", e.toString());
-                        }
+
                     }
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     mediaRecorder.stop();
@@ -242,6 +241,9 @@ public class MessageActivity extends AppCompatActivity {
                     type="audio";
                     addChatInDataBase();
 
+                }
+                }catch (Exception e){
+                    Log.e("Error", e.toString());
                 }
                 return true;
             }
@@ -430,57 +432,6 @@ public class MessageActivity extends AppCompatActivity {
             public void onChanged(DataSnapshot dataSnapshot) {
                 Users users = dataSnapshot.getValue(Users.class);
                 assert users != null;
-                if (notify) {
-//                    sendNotification(userId_receiver, users.getUsername(), msg);
-
-                }
-                notify = false;
-            }
-        });
-    }
-
-    private void sendNotification(String userId_receiver, String username, String msg) {
-        databaseViewModel.getTokenDatabaseRef();
-        databaseViewModel.getTokenRefDb.observe(this, new Observer<DatabaseReference>() {
-            @Override
-            public void onChanged(DatabaseReference databaseReference) {
-                Query query = databaseReference.orderByKey().equalTo(userId_receiver);
-                query.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Token token = snapshot.getValue(Token.class);
-                            Data data = new Data(userId_sender, String.valueOf(R.drawable.ic_baseline_textsms_24), username + ": " + msg, "New Message", userId_receiver);
-
-                            assert token != null;
-                            Sender sender = new Sender(data, token.getToken());
-
-                            apiService.sendNotification(sender)
-                                    .enqueue(new Callback<MyResponse>() {
-                                        @Override
-                                        public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                                            if (response.code() == 200) {
-                                                assert response.body() != null;
-                                                if (response.body().success != 1) {
-
-                                                }
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<MyResponse> call, Throwable t) {
-
-                                        }
-                                    });
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
             }
         });
     }
