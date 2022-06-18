@@ -73,24 +73,24 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        init(view);
-        fetchCurrentUserdata();
+        init(view); //inflate view components
+        fetchCurrentUserdata(); //get current user data to show on screen
         return view;
     }
 
     private void fetchCurrentUserdata() {
-        databaseViewModel.fetchingUserDataCurrent();
+        databaseViewModel.fetchingUserDataCurrent(); //get user data
         databaseViewModel.fetchUserCurrentData.observe(this, new Observer<DataSnapshot>() {
             @Override
             public void onChanged(DataSnapshot dataSnapshot) {
                 Users user = dataSnapshot.getValue(Users.class);
-                if (user != null) {
+                if (user != null) { //if user is valid/ not null store to variable then map to view
                     username = user.getUsername();
                     imageUrl = user.getImageUrl();
                     userBio = user.getBio();
                     tv_currentUserName_profile_fragment.setText(username);
                     tv_profile_fragment_bio.setText(userBio);
-                    if (imageUrl.equals("default")) {
+                    if (imageUrl.equals("default")) { //check if image is default just like homescreen did
                         iv_profileImage_profile_fragment.setImageResource(R.drawable.sample_img);
                     } else {
                         Glide.with(context).load(imageUrl).into(iv_profileImage_profile_fragment);
@@ -103,7 +103,7 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void openImage() {
+    private void openImage() { //open gallery inorder to upload new avatar
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -111,7 +111,7 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void uploadImage() {
+    private void uploadImage() { //upload image to firebase
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Uploading Image.");
         progressDialog.show();
@@ -119,7 +119,7 @@ public class ProfileFragment extends Fragment {
 
         if (imageUri != null) {
             long tsLong = System.currentTimeMillis();
-            timeStamp = Long.toString(tsLong);
+            timeStamp = Long.toString(tsLong); //get timestamp to store image name
             databaseViewModel.fetchImageFileReference(timeStamp, imageUri, context);
             databaseViewModel.imageFileReference.observe(this, new Observer<StorageReference>() {
                 @SuppressWarnings("unchecked")
@@ -142,7 +142,7 @@ public class ProfileFragment extends Fragment {
                                 Uri downLoadUri = task.getResult();
                                 assert downLoadUri != null;
                                 String mUri = downLoadUri.toString();
-                                databaseViewModel.addImageUrlInDatabase("imageUrl", mUri);
+                                databaseViewModel.addImageUrlInDatabase("imageUrl", mUri); //store image to firebase
                             } else {
                                 Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
                             }
@@ -165,7 +165,7 @@ public class ProfileFragment extends Fragment {
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) { //trigger when choosing image from gallery successfully
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
@@ -173,7 +173,7 @@ public class ProfileFragment extends Fragment {
 
             Bitmap bmp = null;
             try {
-                bmp = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(getActivity()).getContentResolver(), data.getData());
+                bmp = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(getActivity()).getContentResolver(), data.getData()); //update new image to view
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -186,7 +186,7 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(context, "Upload in progress.", Toast.LENGTH_SHORT).show();
             } else {
 
-                uploadImage();
+                uploadImage(); //store that image into database
             }
         }
     }

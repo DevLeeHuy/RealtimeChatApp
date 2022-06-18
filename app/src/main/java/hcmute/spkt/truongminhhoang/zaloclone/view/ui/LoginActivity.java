@@ -44,9 +44,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        init();
-        getUserSession();
-        listener();
+        init(); //inflate view components
+        getUserSession(); //persist login
+        listener(); // listen to view component events
     }
 
 
@@ -66,10 +66,10 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     private void getUserSession() {
-        logInViewModel.getFirebaseUserLogInStatus();
+        logInViewModel.getFirebaseUserLogInStatus(); //check if user has already login before but not logout => redirect to homescreen without login again
         logInViewModel.firebaseUserLoginStatus.observe(this, firebaseUser -> {
             currentUser = firebaseUser;
-            if (currentUser != null) {
+            if (currentUser != null) { // if not null => user has already login before
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(intent);
                 finish();
@@ -85,10 +85,10 @@ public class LoginActivity extends AppCompatActivity {
             et_emailIdLogIn.clearFocus();
             et_pwdLogIn.clearFocus();
             v.startAnimation(buttonClick);
-            dismissKeyboard();
+            dismissKeyboard(); //hide keyboard
             emailLog = et_emailIdLogIn.getText().toString();
             pwdLog = et_pwdLogIn.getText().toString();
-
+            //validate input fields section
             if ((pwdLog.isEmpty() && emailLog.isEmpty())) {
                 Toast.makeText(LoginActivity.this, "Fields are empty!", Toast.LENGTH_SHORT).show();
                 et_emailIdLogIn.requestFocus();
@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 
         });
 
-        textToSignUp.setOnClickListener(v -> {
+        textToSignUp.setOnClickListener(v -> { // move to signup screen
             Intent intent = new Intent(getBaseContext(), SignupActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-    public void logInUser() {
+    public void logInUser() { //login function 
         logInViewModel.userLogIn(emailLog, pwdLog);
         logInViewModel.logInUser.observe(this, task -> {
             if (!task.isSuccessful()) {

@@ -1,6 +1,5 @@
 package hcmute.spkt.truongminhhoang.zaloclone.view.ui;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -17,8 +16,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,36 +33,22 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hcmute.spkt.truongminhhoang.zaloclone.R;
 import hcmute.spkt.truongminhhoang.zaloclone.services.model.Chats;
 import hcmute.spkt.truongminhhoang.zaloclone.services.model.Users;
-import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.Client;
-import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.Data;
-import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.MyResponse;
-import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.Sender;
-import hcmute.spkt.truongminhhoang.zaloclone.services.notifications.Token;
 import hcmute.spkt.truongminhhoang.zaloclone.utils.ImageConvert;
 import hcmute.spkt.truongminhhoang.zaloclone.view.adapters.MessageAdapter;
-import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.APIService;
 import hcmute.spkt.truongminhhoang.zaloclone.view.fragments.BottomSheetProfileDetailUser;
 import hcmute.spkt.truongminhhoang.zaloclone.viewModel.DatabaseViewModel;
 import hcmute.spkt.truongminhhoang.zaloclone.viewModel.LogInViewModel;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MessageActivity extends AppCompatActivity {
     LogInViewModel logInViewModel;
@@ -100,7 +83,6 @@ public class MessageActivity extends AppCompatActivity {
     Context context;
     BottomSheetProfileDetailUser bottomSheetProfileDetailUser;
     Uri imageUri;
-    APIService apiService;
     boolean notify = false;
     private static int MICROPHONE_PERMISSION_CODE = 200;
     MediaRecorder mediaRecorder;
@@ -108,15 +90,14 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
-
-        userId_receiver = getIntent().getStringExtra("userid");
+        userId_receiver = getIntent().getStringExtra("userid"); //get receiver userid passed from home activity
         Log.e("TAG", userId_receiver);
-        init();
-        getCurrentFirebaseUser();
-        fetchAndSaveCurrentProfileTextAndData();
+        init();//inflate view components
+        getCurrentFirebaseUser(); //get current user data
+        fetchAndSaveCurrentProfileTextAndData(); //get receiver information
 
 
-        iv_profile_image.setOnClickListener(new View.OnClickListener() {
+        iv_profile_image.setOnClickListener(new View.OnClickListener() { //show user information bottom sheet when user avatar is clicked
             @Override
             public void onClick(View v) {
                 openBottomSheetDetailFragment(profileUserNAme, profileImageURL, bio);
@@ -124,13 +105,13 @@ public class MessageActivity extends AppCompatActivity {
         });
 
 
-        btn_sendIv.setOnClickListener(new View.OnClickListener() {
+        btn_sendIv.setOnClickListener(new View.OnClickListener() { //trigger when send message button is clicked
             @Override
             public void onClick(View v) {
                 notify = true;
 
                 chat = et_chat.getText().toString().trim();
-                if (!chat.equals("")) {
+                if (!chat.equals("")) { //validate if message is empty
                     type = "text";
                     addChatInDataBase();
                 } else {
@@ -143,25 +124,25 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) { //trigger when user take photo or pick photo from gallery successfully
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) { //if user pick image from gallery successfully
             imageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 type = "image";
                 chat = ImageConvert.getEncoded64ImageStringFromBitmap(bitmap);
-                addChatInDataBase();
+                addChatInDataBase(); //store image into database
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        else if(requestCode==CAPTURE_IMAGE && resultCode==RESULT_OK){
+        else if(requestCode==CAPTURE_IMAGE && resultCode==RESULT_OK){//if user capture image successfully
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             type = "image";
             chat = ImageConvert.getEncoded64ImageStringFromBitmap(bitmap);
-            addChatInDataBase();
+            addChatInDataBase(); //store image into database
         }
     }
 
@@ -172,15 +153,13 @@ public class MessageActivity extends AppCompatActivity {
                 .get(LogInViewModel.class);
         context = MessageActivity.this;
 
-//        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
-
         iv_user_status_message_view = findViewById(R.id.iv_user_status_message_view);
         iv_profile_image = findViewById(R.id.iv_user_image);
 
         tv_profile_user_name = findViewById(R.id.tv_profile_user_name);
         iv_back_button = findViewById(R.id.iv_back_button);
 
-        iv_back_button.setOnClickListener(new View.OnClickListener() {
+        iv_back_button.setOnClickListener(new View.OnClickListener() { //back to home screen
             @Override
             public void onClick(View v) {
 
@@ -192,7 +171,7 @@ public class MessageActivity extends AppCompatActivity {
         });
 
         btn_collections = findViewById(R.id.iv_collections);
-        btn_collections.setOnClickListener(new View.OnClickListener() {
+        btn_collections.setOnClickListener(new View.OnClickListener() { //open gallery when clicking to collection icon
             @Override
             public void onClick(View v) {
                 Intent gallery = new Intent();
@@ -202,7 +181,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
         btn_camera=findViewById(R.id.iv_camera);
-        btn_camera.setOnClickListener(new View.OnClickListener() {
+        btn_camera.setOnClickListener(new View.OnClickListener() { //open camera when clicking to camera icon
             @Override
             public void onClick(View v) {
                 if(ContextCompat.checkSelfPermission(MessageActivity.this,Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
@@ -220,7 +199,7 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 try {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) { //start recording audio when pressing
                     if (isMicrophonePresent()) {
 
                             getMicrophonePermission();
@@ -233,7 +212,7 @@ public class MessageActivity extends AppCompatActivity {
                             mediaRecorder.start();
 
                     }
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) { //end recording audio when releasing
                     mediaRecorder.stop();
                     mediaRecorder.release();
                     mediaRecorder = null;
@@ -265,11 +244,10 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    public String convert(String path) {
+    public String convert(String path) { //convert the audio file into base64 string (for storing purpose)
         byte[] audioBytes;
         try {
 
-            // Just to check file size.. Its is correct i-e; Not Zero
             File audioFile = new File(path);
             long fileSize = audioFile.length();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -288,31 +266,31 @@ public class MessageActivity extends AppCompatActivity {
             return null;
         }
     }
-    private String getRecordingFilePath() {
+    private String getRecordingFilePath() { //get stored record path
         ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
         File musicDirectory = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
         File file = new File(musicDirectory, "testRecordingFIle" + ".mp3");
         return file.getPath();
     }
 
-    private boolean isMicrophonePresent() {
+    private boolean isMicrophonePresent() { //check if device has microphone
         return this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE);
     }
 
-    private void getMicrophonePermission() {
+    private void getMicrophonePermission() { //ask for using microphone permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
 
         }
     }
 
-    private void openBottomSheetDetailFragment(String username, String imageUrl, String bio) {
+    private void openBottomSheetDetailFragment(String username, String imageUrl, String bio) { //open user detail bottom sheet
         bottomSheetProfileDetailUser = new BottomSheetProfileDetailUser(username, imageUrl, bio, context);
         assert getSupportActionBar() != null;
         bottomSheetProfileDetailUser.show(getSupportFragmentManager(), "edit");
     }
 
-    private void getCurrentFirebaseUser() {
+    private void getCurrentFirebaseUser() { //get user data from firebase
         logInViewModel.getFirebaseUserLogInStatus();
         logInViewModel.firebaseUserLoginStatus.observe(this, new Observer<FirebaseUser>() {
             @Override
@@ -329,34 +307,35 @@ public class MessageActivity extends AppCompatActivity {
             userId_receiver = getIntent().getStringExtra("userId");
         }
         databaseViewModel.fetchSelectedUserProfileData(userId_receiver);
-        databaseViewModel.fetchSelectedProfileUserData.observe(this, new Observer<DataSnapshot>() {
+        databaseViewModel.fetchSelectedProfileUserData.observe(this, new Observer<DataSnapshot>() { //get receiver all information based on receiver id
             @Override
             public void onChanged(DataSnapshot dataSnapshot) {
                 Users user = dataSnapshot.getValue(Users.class);
 
-                assert user != null;
-                profileUserNAme = user.getUsername();
-                profileImageURL = user.getImageUrl();
-                bio = user.getBio();
-                user_status = user.getStatus();
+                if( user != null) { //if user exists => store data into variable
+                    profileUserNAme = user.getUsername();
+                    profileImageURL = user.getImageUrl();
+                    bio = user.getBio();
+                    user_status = user.getStatus();
 
-                try {
-                    if (user_status.contains("online") && isNetworkConnected()) {
-                        iv_user_status_message_view.setBackgroundResource(R.drawable.online_status);
-                    } else {
-                        iv_user_status_message_view.setBackgroundResource(R.drawable.offline_status);
+                    try {
+                        if (user_status.contains("online") && isNetworkConnected()) { //check if that user is online and internet is ok => change status circle color into green
+                            iv_user_status_message_view.setBackgroundResource(R.drawable.online_status);
+                        } else { // else change circle color to grey
+                            iv_user_status_message_view.setBackgroundResource(R.drawable.offline_status);
+                        }
+                    } catch (InterruptedException | IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException | IOException e) {
-                    e.printStackTrace();
-                }
 
-                tv_profile_user_name.setText(profileUserNAme);
-                if (profileImageURL.equals("default")) {
-                    iv_profile_image.setImageResource(R.drawable.sample_img);
-                } else {
-                    Glide.with(getApplicationContext()).load(profileImageURL).into(iv_profile_image);
+                    tv_profile_user_name.setText(profileUserNAme);
+                    if (profileImageURL.equals("default")) { //check default image like home screen
+                        iv_profile_image.setImageResource(R.drawable.sample_img);
+                    } else {
+                        Glide.with(getApplicationContext()).load(profileImageURL).into(iv_profile_image);
+                    }
+                    fetchChatFromDatabase(userId_receiver, userId_sender); // then get all messages history
                 }
-                fetchChatFromDatabase(userId_receiver, userId_sender);
             }
         });
 
@@ -368,7 +347,7 @@ public class MessageActivity extends AppCompatActivity {
         databaseViewModel.fetchChatUser();
         databaseViewModel.fetchedChat.observe(this, new Observer<DataSnapshot>() {
             @Override
-            public void onChanged(DataSnapshot dataSnapshot) {
+            public void onChanged(DataSnapshot dataSnapshot) { //check if receiver has seen message yet => if yes update status
                 for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                     Chats chats = dataSnapshot1.getValue(Chats.class);
                     assert chats != null;
@@ -390,26 +369,27 @@ public class MessageActivity extends AppCompatActivity {
 
     private void fetchChatFromDatabase(String myId, String senderId) {
         databaseViewModel.fetchChatUser();
-        databaseViewModel.fetchedChat.observe(this, new Observer<DataSnapshot>() {
+        databaseViewModel.fetchedChat.observe(this, new Observer<DataSnapshot>() { //get all chat history with this receiver user id
             @Override
             public void onChanged(DataSnapshot dataSnapshot) {
                 chatsArrayList.clear();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) { //if has message => store to variable then mapping to recycle view
 
                     Chats chats = snapshot.getValue(Chats.class);
-                    assert chats != null;
-                    if (chats.getReceiverId().equals(senderId) && chats.getSenderId().equals(myId) || chats.getReceiverId().equals(myId) && chats.getSenderId().equals(senderId)) {
-                        chatsArrayList.add(chats);
+                    if(chats != null) {
+                        if (chats.getReceiverId().equals(senderId) && chats.getSenderId().equals(myId) || chats.getReceiverId().equals(myId) && chats.getSenderId().equals(senderId)) {
+                            chatsArrayList.add(chats);
+                        }
+                        messageAdapter = new MessageAdapter(chatsArrayList, context, userId_sender);
+                        recyclerView.setAdapter(messageAdapter);
                     }
-                    messageAdapter = new MessageAdapter(chatsArrayList, context, userId_sender);
-                    recyclerView.setAdapter(messageAdapter);
                 }
             }
         });
     }
 
-    private void addChatInDataBase() {
+    private void addChatInDataBase() { //store message into database
 
         long tsLong = System.currentTimeMillis();
         timeStamp = Long.toString(tsLong);
@@ -437,7 +417,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    private void currentUser(String userid) {
+    private void currentUser(String userid) { //store current user data into shared preference
         SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
         editor.putString("currentuser", userid);
         editor.apply();
@@ -449,14 +429,14 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume() { //update user status already comment in home screen
         super.onResume();
         addStatusInDatabase("online");
         currentUser(userId_receiver);
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause() { //update user status already comment in home screen
         super.onPause();
         addStatusInDatabase("offline");
         currentUser("none");

@@ -30,23 +30,23 @@ public class ForgetPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget_password);
-        init();
-        listeners();
+        init();// inflate view components
+        listeners(); // listen to view component events
 
     }
 
     private void listeners() {
-        final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
+        final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F); // initialize animation value when clicking
 
-        iv_back_button.setOnClickListener(v -> finish());
+        iv_back_button.setOnClickListener(v -> finish()); // return to previous screen
 
         btn_reset.setOnClickListener(v -> {
             String email = et_email_to_reset.getText().toString().trim();
             et_email_to_reset.clearFocus();
             v.startAnimation(buttonClick);
-            dismissKeyboard();
+            dismissKeyboard(); // hide keyboard
 
-            if(email.isEmpty()){
+            if(email.isEmpty()){  // check if input field is empty
                 et_email_to_reset.setError("Please enter your authorised Email Id.");
                 Toast.makeText(ForgetPasswordActivity.this, "Field is empty", Toast.LENGTH_SHORT).show();
                 et_email_to_reset.requestFocus();
@@ -59,16 +59,16 @@ public class ForgetPasswordActivity extends AppCompatActivity {
     }
 
     private void resetPassword(String email) {
-        logInViewModel.addPasswordResetEmail(email);
-        logInViewModel.successPasswordReset.observe(this, task -> {
-            if(!task.isSuccessful()){
+        logInViewModel.addPasswordResetEmail(email); // send email reset password to specific email
+        logInViewModel.successPasswordReset.observe(this, task -> { //listen to this event
+            if(!task.isSuccessful()){  // if request fail => show error
                 et_email_to_reset.setClickable(true);
                 et_email_to_reset.setText("");
                 String error= Objects.requireNonNull(task.getException()).getMessage();
                 et_email_to_reset.requestFocus();
                 Toast.makeText(ForgetPasswordActivity.this, error, Toast.LENGTH_SHORT).show();
 
-            }else{
+            }else{ //if nothing wrong => back to login screen
                 Toast.makeText(ForgetPasswordActivity.this, "Please check your Email.", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ForgetPasswordActivity.this, LoginActivity.class);
                 startActivity(intent);

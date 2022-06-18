@@ -52,10 +52,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        init();
-        fetchCurrentUserdata();
-        setupPagerFragment();
-        onOptionMenuClicked();
+        init(); // inflate view components
+        fetchCurrentUserdata(); // get current user data based on user's token
+        setupPagerFragment();// setup paper
+        onOptionMenuClicked();//setup menu & its events
 
     }
 
@@ -74,24 +74,24 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void fetchCurrentUserdata() {
-        databaseViewModel.fetchingUserDataCurrent();
-        databaseViewModel.fetchUserCurrentData.observe(this, new Observer<DataSnapshot>() {
+        databaseViewModel.fetchingUserDataCurrent(); //get user data
+        databaseViewModel.fetchUserCurrentData.observe(this, new Observer<DataSnapshot>() { //listen to event
             @Override
-            public void onChanged(DataSnapshot dataSnapshot) {
-                Users user = dataSnapshot.getValue(Users.class);
-                if (user != null) {
+            public void onChanged(DataSnapshot dataSnapshot) { //trigger when fetching/data changing
+                Users user = dataSnapshot.getValue(Users.class); //get user data
+                if (user != null) { //if user is valid/not null (
                     progressBar.setVisibility(View.GONE);
                     linearLayout.setVisibility(View.VISIBLE);
-                    username = user.getUsername();
+                    username = user.getUsername(); //store data into variable
                     imageUrl = user.getImageUrl();
                     //  Toast.makeText(HomeActivity.this, "Welcome back " + username + ".", Toast.LENGTH_SHORT).show();
                     currentUserName.setText(username);
-                    if (imageUrl.equals("default")) {
+                    if (imageUrl.equals("default")) { // check if user avatar is default => if not => need to convert in order to show it into screen
                         profileImage.setImageResource(R.drawable.sample_img);
                     } else {
                         Glide.with(getApplicationContext()).load(imageUrl).into(profileImage);
                     }
-                } else {
+                } else { // if user not found => inform to user
                     Toast.makeText(HomeActivity.this, "User not found..", Toast.LENGTH_SHORT).show();
                 }
 
@@ -99,7 +99,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void getUserAuthToSignOut() {
+    private void getUserAuthToSignOut() { // logout function
         logInViewModel.getFirebaseAuth();
         logInViewModel.firebaseAuthLiveData.observe(this, new Observer<FirebaseAuth>() {
             @Override
@@ -117,11 +117,11 @@ public class HomeActivity extends AppCompatActivity {
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.log_out_home) {
+                if (item.getItemId() == R.id.log_out_home) { // when choosing logout option
                     getUserAuthToSignOut();
                     Toast.makeText(HomeActivity.this, "Logged out", Toast.LENGTH_SHORT).show();
                     return true;
-                } else if (item.getItemId() == R.id.setting) {
+                } else if (item.getItemId() == R.id.setting) { //when choosing setting option
                     Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
                     startActivity(intent);
                     finish();
@@ -164,7 +164,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        new FirebaseInstanceDatabase().autoClearOutOfDateItems();
+        new FirebaseInstanceDatabase().autoClearOutOfDateItems(); //auto delete audio/image mechanism function
 
     }
 
@@ -173,13 +173,13 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume() { //change user status back to online when user get back to app
         super.onResume();
         status("online");
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause() { // change user status to offline when user quit without logout
         super.onPause();
         status("offline");
     }

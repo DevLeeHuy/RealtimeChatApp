@@ -22,10 +22,10 @@ public class FirebaseLoginInstance {
 
 
     public MutableLiveData<FirebaseUser> getFirebaseUserLoginStatus() {
-
+        //get user login status from firebase => if user has login before but not logout
         final MutableLiveData<FirebaseUser> firebaseUserLoginStatus = new MutableLiveData<>();
 
-        firebaseUserLoginStatus.setValue(firebaseUser);
+        firebaseUserLoginStatus.setValue(firebaseUser); //set value into to trigger observe event
         Log.e("TAG", "authStatus "+firebaseUserLoginStatus.getValue());
 
         return firebaseUserLoginStatus;
@@ -33,12 +33,14 @@ public class FirebaseLoginInstance {
     }
 
     public MutableLiveData<FirebaseAuth> getFirebaseAuth() {
+        //get specific user data from database using firebase Auth API
         final MutableLiveData<FirebaseAuth> firebaseAuth = new MutableLiveData<>();
-        firebaseAuth.setValue(mAuth);
+        firebaseAuth.setValue(mAuth);//set value into to trigger observe event
         return firebaseAuth;
     }
 
     public MutableLiveData<Boolean> successUpdateToken(String newToken) {
+        //update token after login successfully
         final MutableLiveData<Boolean> successTokenUpdate = new MutableLiveData<>();
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -54,7 +56,7 @@ public class FirebaseLoginInstance {
 
     public MutableLiveData<Task> loginUser(String emailLogin, String pwdLogin) {
         final MutableLiveData<Task> taskLogin = new MutableLiveData<>();
-
+        //login with firebase authentication feature => need providing email and password
         mAuth.signInWithEmailAndPassword(emailLogin, pwdLogin).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -67,11 +69,11 @@ public class FirebaseLoginInstance {
 
     public MutableLiveData<Task> resetPassword(String email) {
         final MutableLiveData<Task> successResetPassword = new MutableLiveData<>();
-
+        //reset password provided by firebase library
         mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                successResetPassword.setValue(task);
+                successResetPassword.setValue(task); //set value into to trigger observe event
             }
         });
 

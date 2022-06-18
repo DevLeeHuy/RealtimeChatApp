@@ -14,13 +14,14 @@ public class FirebaseSignUpInstance {
     private FirebaseUser firebaseUser;
     public MutableLiveData<FirebaseUser> firebaseUsers = new MutableLiveData<>();
 
-    public MutableLiveData<Task> signInUser(String userNameSignIn, String phoneNumber, String emailSignIn, String passwordSignIn) {
+    public MutableLiveData<Task> signUpUser(String userNameSignIn, String phoneNumber, String emailSignIn, String passwordSignIn) {
         final MutableLiveData<Task> taskSignIn = new MutableLiveData<>();
+        //using firebase auth API for sign up user
         mAuth.createUserWithEmailAndPassword(emailSignIn, passwordSignIn).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> value) {
                 firebaseUser = mAuth.getCurrentUser();
-                firebaseUsers.setValue(firebaseUser);
+                firebaseUsers.setValue(firebaseUser); //set value in order to trigger observe
                 taskSignIn.setValue(value);
             }
 

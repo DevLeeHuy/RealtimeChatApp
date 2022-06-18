@@ -52,8 +52,8 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        init();
-        listeners();
+        init(); //inflate view components
+        listeners();//listen to view component events
     }
     private void init() {
         et_usernameSignIn = findViewById(R.id.et_signin_username);
@@ -73,21 +73,24 @@ public class SignupActivity extends AppCompatActivity {
     }
     private void listeners() {
 
-        btn_signIn.setOnClickListener(new View.OnClickListener() {
+        btn_signIn.setOnClickListener(new View.OnClickListener() { //trigger when signup button is clicked
             final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
 
             @Override
             public void onClick(View v) {
+
                 et_usernameSignIn.clearFocus();
                 et_phoneSignIn.clearFocus();
                 et_emailIdSignIn.clearFocus();
                 et_pwdSignIn.clearFocus();
                 v.startAnimation(buttonClick);
-
+                //get all input value
                 emailId = et_emailIdSignIn.getText().toString();
                 pwd = et_pwdSignIn.getText().toString();
                 userName = et_usernameSignIn.getText().toString();
                 phoneNumber = et_phoneSignIn.getText().toString();
+
+                //validation session
                 if ((pwd.isEmpty() && emailId.isEmpty() && userName.isEmpty() && phoneNumber.isEmpty())) {
                     Toast.makeText(SignupActivity.this, "Fields are empty!", Toast.LENGTH_SHORT).show();
                     et_usernameSignIn.requestFocus();
@@ -103,7 +106,7 @@ public class SignupActivity extends AppCompatActivity {
                 } else if (pwd.isEmpty()) {
                     et_pwdSignIn.setError("Please set your password.");
                     et_pwdSignIn.requestFocus();
-                } else {
+                } else { //pass all validation => store user to database
                     progressBarSignInFrame.setVisibility(View.VISIBLE);
                     et_usernameSignIn.setClickable(false);
                     et_phoneSignIn.setClickable(false);
@@ -111,12 +114,12 @@ public class SignupActivity extends AppCompatActivity {
                     et_pwdSignIn.setClickable(false);
                     textToLogin.setClickable(false);
                     dismissKeyboard();
-                    signInUsers();
+                    signUpUsers();
                 }
             }
         });
 
-        textToLogin.setOnClickListener(new View.OnClickListener() {
+        textToLogin.setOnClickListener(new View.OnClickListener() { // slide back to login screen
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), LoginActivity.class);
@@ -127,9 +130,9 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    public void signInUsers() {
-        signUpViewModel.userSignIn(userName, phoneNumber, emailId, pwd);
-        signUpViewModel.signInUser.observe(this, new Observer<Task>() {
+    public void signUpUsers() {
+        signUpViewModel.userSignUp(userName, phoneNumber, emailId, pwd);
+        signUpViewModel.signUpUser.observe(this, new Observer<Task>() {
             @Override
             public void onChanged(Task task) {
                 if (!task.isSuccessful()) {

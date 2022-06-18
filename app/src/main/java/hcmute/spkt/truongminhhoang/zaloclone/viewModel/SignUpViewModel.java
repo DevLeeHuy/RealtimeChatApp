@@ -11,15 +11,15 @@ import hcmute.spkt.truongminhhoang.zaloclone.services.repository.FirebaseSignUpI
 public class SignUpViewModel extends ViewModel {
 
     private FirebaseSignUpInstance signUpInstance;
-    public LiveData<Task> signInUser;
+    public LiveData<Task> signUpUser;
     public  LiveData<FirebaseUser> userFirebaseSession;
 
     public SignUpViewModel() {
         signUpInstance = new FirebaseSignUpInstance();
     }
 
-    public void userSignIn(String userNameSignIn, String phoneNumber, String emailSignIn, String passwordSignIn) {
-        signInUser = signUpInstance.signInUser(userNameSignIn, phoneNumber, emailSignIn, passwordSignIn);
+    public void userSignUp(String userNameSignIn, String phoneNumber, String emailSignIn, String passwordSignIn) {
+        signUpUser = signUpInstance.signUpUser(userNameSignIn, phoneNumber, emailSignIn, passwordSignIn);
     }
 
 
