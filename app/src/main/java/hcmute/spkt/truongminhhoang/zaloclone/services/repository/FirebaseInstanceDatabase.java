@@ -388,6 +388,7 @@ public class FirebaseInstanceDatabase {
         hashMap.put("date", date);
         hashMap.put("second", second);
 
+        // Insert or Update Setting by user id
         instance.getReference("Settings").child(firebaseUser.getUid()).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -406,7 +407,8 @@ public class FirebaseInstanceDatabase {
     public MutableLiveData<DataSnapshot> fetchSettingDataCurrent() {
         final MutableLiveData<DataSnapshot> fetchSettingData = new MutableLiveData<>();
 
-       instance.getReference("Settings").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        // Get Setting by user id
+        instance.getReference("Settings").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 fetchSettingData.setValue(dataSnapshot);
@@ -421,31 +423,39 @@ public class FirebaseInstanceDatabase {
         return fetchSettingData;
     }
 
+    // Function applies automatic deletion mechanism
     public void autoClearOutOfDateItems() {
-        Long now = System.currentTimeMillis();
         instance.getReference("Settings").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 HashMap<String, String> setting = (HashMap<String, String>)dataSnapshot.getValue();
-                assert setting != null;
-                instance.getReference("Chats").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Chats chats = dataSnapshot.getValue(Chats.class);
-                        assert chats != null;
-                        Long anchor = setting.get("second").trim().equals("") || setting.get("second").equals("0")
-                                ? Long.parseLong(setting.get("date")) * 86400000
-                                : Long.parseLong(setting.get("second")) * 1000;
-                        if (!chats.getType().equals("text") && Long.parseLong(chats.getTimestamp()) < now - anchor) {
-                            dataSnapshot.getRef().removeValue();
+                if (setting != null) {
+                    // Get present time
+                    Long now = System.currentTimeMillis();
+
+                    // Get period of time is set in setting (date is actual applications & second is just for testing and demo)
+                    Long period = setting.get("second").trim().equals("") || setting.get("second").equals("0")
+                            ? Long.parseLong(setting.get("date")) * 86400000
+                            : Long.parseLong(setting.get("second")) * 1000;
+
+                    // Get list chat
+                    instance.getReference("Chats").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Chats chats = snapshot.getValue(Chats.class);
+
+                                // Remove if this is an expired image or audio record (compare with anchor equal now - period )
+                                if (chats != null && !chats.getType().equals("text") && Long.parseLong(chats.getTimestamp()) < now - period) {
+                                    snapshot.getRef().removeValue();
+                                }
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {}
+                    });
+                }
             }
 
             @Override

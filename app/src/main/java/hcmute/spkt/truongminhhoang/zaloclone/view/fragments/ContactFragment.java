@@ -45,7 +45,6 @@ public class ContactFragment extends Fragment {
     private Context context;
     private DatabaseViewModel databaseViewModel;
     private ArrayList<Users> contactUsers;
-    private String currentUserId;
     private RecyclerView recyclerView;
     private UserFragmentAdapter userFragmentAdapter;
     EditText et_search;
@@ -60,10 +59,13 @@ public class ContactFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         init(view);
+
+        // Sync contact when access to contact fragment
         syncContact();
         return view;
     }
 
+    // Init views and add events listener for fields & buttons
     private void init(View view) {
         databaseViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
                 .getInstance(Objects.requireNonNull(getActivity()).getApplication()))
@@ -105,7 +107,7 @@ public class ContactFragment extends Fragment {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    // Search users in contacts
     private void searchUsers(String searchText) {
         ArrayList<Users> users = new ArrayList<>();
         for (Users user: contactUsers) {
@@ -129,9 +131,10 @@ public class ContactFragment extends Fragment {
                     public void onChanged(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Users users = (Users) snapshot.getValue(Users.class);
-                            assert users != null;
-                            if (contactUsers.stream().noneMatch(user -> user.getId().equals(users.getId()))) {
-                                contactUsers.add(users);
+                            if (users != null) {
+                                if (contactUsers.stream().noneMatch(user -> user.getId().equals(users.getId()))) {
+                                    contactUsers.add(users);
+                                }
                             }
                         }
                         userFragmentAdapter = new UserFragmentAdapter(contactUsers, context, false);
@@ -152,6 +155,7 @@ public class ContactFragment extends Fragment {
     private void syncContact() {
         List<String> contacts = new ArrayList<>();
 
+        // Check and get permission to get contacts for local device
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.READ_CONTACTS}, 0);
         }
@@ -161,12 +165,14 @@ public class ContactFragment extends Fragment {
         Cursor cursor = contentResolver.query(uri, null, null, null ,null);
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
+                // Get only for number
                 int phoneColIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                 String phoneNumber = phoneColIndex > 0 ? cursor.getString(phoneColIndex) : "";
                 contacts.add(phoneNumber);
             }
         }
 
+        // Use list phone number to get contacts
         getUserByListContact(contacts);
     }
 }
