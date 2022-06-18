@@ -131,8 +131,8 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void signUpUsers() {
-        signUpViewModel.userSignUp(userName, phoneNumber, emailId, pwd);
-        signUpViewModel.signUpUser.observe(this, new Observer<Task>() {
+        signUpViewModel.userSignUp(userName, phoneNumber, emailId, pwd); //signup user
+        signUpViewModel.signUpUser.observe(this, new Observer<Task>() {  //listen to event
             @Override
             public void onChanged(Task task) {
                 if (!task.isSuccessful()) {
@@ -160,7 +160,7 @@ public class SignupActivity extends AppCompatActivity {
                         Toast.makeText(context, "SignUp unsuccessful. Try again.", Toast.LENGTH_SHORT).show();
                     }
 
-                } else {
+                } else { //if nothing goes wrong => signup => move to homescreen
                     getUserSession();
                     addUserInDatabase(userName, phoneNumber, emailId, userId);
                     Intent intent = new Intent(SignupActivity.this, HomeActivity.class);
@@ -178,12 +178,12 @@ public class SignupActivity extends AppCompatActivity {
         imageUrl = "default";
         userId = currentUser.getUid();
         databaseViewModel.addUserDatabase(userId, userName, phoneNumber, email, timeStamp, imageUrl);
-        databaseViewModel.successAddUserDb.observe(this, new Observer<Boolean>() {
+        databaseViewModel.successAddUserDb.observe(this, new Observer<Boolean>() { //store user signup data into database
             @Override
             public void onChanged(Boolean aBoolean) {
-                if (aBoolean)
+                if (aBoolean) //success
                     Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
-                else {
+                else { // if error occurs inform to user
                     Toast.makeText(context, "ERROR WHILE ADDING DATA IN DATABASE.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -191,7 +191,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void getUserSession() {
-        signUpViewModel.getUserFirebaseSession();
+        signUpViewModel.getUserFirebaseSession(); //get user data via firebase auth session API
         signUpViewModel.userFirebaseSession.observe(this, new Observer<FirebaseUser>() {
             @Override
             public void onChanged(FirebaseUser firebaseUser) {
@@ -201,7 +201,7 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
-    public void dismissKeyboard() {
+    public void dismissKeyboard() { //hide keyboard
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         assert imm != null;
         imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
